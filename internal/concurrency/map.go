@@ -4,15 +4,18 @@ import (
 	"sync"
 )
 
+// MapOfSlice maps keys of type string to values of type []interface{} and allows concurrent reads and non-concurrent writes.
 type MapOfSlice struct {
 	items map[string][]interface{}
 	mutex sync.RWMutex
 }
 
+// NewMapOfSlice creates a new instance of MapOfSlice
 func NewMapOfSlice() *MapOfSlice {
 	return &MapOfSlice{items: map[string][]interface{}{}}
 }
 
+// Get returns the value to which the specified key is mapped, or false if this map contains no mapping for the key
 func (concurrentMap *MapOfSlice) Get(key string) ([]interface{}, bool) {
 	concurrentMap.mutex.RLock()
 	defer concurrentMap.mutex.RUnlock()
@@ -23,12 +26,14 @@ func (concurrentMap *MapOfSlice) Get(key string) ([]interface{}, bool) {
 	return nil, false
 }
 
+// AppendAt appends the specified value to the end of the slice associated with the specified key in this map
 func (concurrentMap *MapOfSlice) AppendAt(key string, item interface{}) {
 	concurrentMap.mutex.Lock()
 	defer concurrentMap.mutex.Unlock()
 	concurrentMap.items[key] = append(concurrentMap.items[key], item)
 }
 
+// RemoveAt removes the specified value from the slice associated with the specified key in this map
 func (concurrentMap *MapOfSlice) RemoveAt(key string, item interface{}) {
 	concurrentMap.mutex.Lock()
 	defer concurrentMap.mutex.Unlock()
