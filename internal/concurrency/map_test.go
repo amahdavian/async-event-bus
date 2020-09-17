@@ -83,7 +83,7 @@ func TestShouldAllowConcurrentAddsForDifferentKeys(t *testing.T) {
 	}
 }
 
-func TestRemoveValueForGivenKey(t *testing.T) {
+func TestShouldRemoveValueAndDeleteKeyWhenOnlyOneValueIsAssociatedWithGivenKey(t *testing.T) {
 	mapOfSlice := concurrency.NewMapOfSlice()
 	mapOfSlice.AppendAt("SomeKey", "SomeItem")
 
@@ -96,8 +96,43 @@ func TestRemoveValueForGivenKey(t *testing.T) {
 
 	actual, found = mapOfSlice.Get("SomeKey")
 
+	assertThat(t, found, is.False())
+	assertThat(t, actual == nil, is.True())
+}
+
+func TestShouldOnlyRemoveGivenValueWhenMultipleValuesAreAssociatedWithGivenKey(t *testing.T) {
+	mapOfSlice := concurrency.NewMapOfSlice()
+	mapOfSlice.AppendAt("SomeKey", "SomeItem")
+	mapOfSlice.AppendAt("SomeKey", "AnotherItem")
+
+	actual, found := mapOfSlice.Get("SomeKey")
+
 	assertThat(t, found, equals(true))
-	assertThat(t, actual, equals([]interface{}{}))
+	assertThat(t, actual, equals([]interface{}{"SomeItem", "AnotherItem"}))
+
+	mapOfSlice.RemoveAt("SomeKey", "SomeItem")
+
+	actual, found = mapOfSlice.Get("SomeKey")
+
+	assertThat(t, found, is.True())
+	assertThat(t, actual, equals([]interface{}{"AnotherItem"}))
+}
+
+func TestShouldDoNothingWhenRemovingNonExistingValueForGivenKey(t *testing.T) {
+	mapOfSlice := concurrency.NewMapOfSlice()
+	mapOfSlice.AppendAt("SomeKey", "SomeItem")
+
+	actual, found := mapOfSlice.Get("SomeKey")
+
+	assertThat(t, found, equals(true))
+	assertThat(t, actual, equals([]interface{}{"SomeItem"}))
+
+	mapOfSlice.RemoveAt("SomeKey", "AnotherItem")
+
+	actual, found = mapOfSlice.Get("SomeKey")
+
+	assertThat(t, found, is.True())
+	assertThat(t, actual, equals([]interface{}{"SomeItem"}))
 }
 
 func TestShouldAllowConcurrentRemovalsOfValuesForGivenKey(t *testing.T) {
@@ -129,6 +164,6 @@ func TestShouldAllowConcurrentRemovalsOfValuesForGivenKey(t *testing.T) {
 
 	actual, found := mapOfSlice.Get("SomeKey")
 
-	assertThat(t, found, equals(true))
-	assertThat(t, actual, equals([]interface{}{}))
+	assertThat(t, found, is.False())
+	assertThat(t, actual == nil, is.True())
 }

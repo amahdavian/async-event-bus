@@ -38,7 +38,12 @@ func (concurrentMap *MapOfSlice) RemoveAt(key string, item interface{}) {
 	concurrentMap.mutex.Lock()
 	defer concurrentMap.mutex.Unlock()
 	if items, found := concurrentMap.items[key]; found {
-		concurrentMap.items[key] = remove(items, item)
+		items = remove(items, item)
+		if len(items) > 0 {
+			concurrentMap.items[key] = items
+		} else {
+			delete(concurrentMap.items, key)
+		}
 	}
 }
 
