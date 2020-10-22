@@ -31,15 +31,15 @@ func NewEventBus() *EventBus {
 // Publish publishes the given event to all subscribers and upon delivery failure, uses backoff strategy to recover.
 func (eventBus *EventBus) Publish(event Event, backoffStrategy BackoffStrategy) {
 	if eventSubscribers, found := eventBus.subscribers.Get(event.Name); found {
-		go func(event Event, eventChannels []interface{}) {
-			for _, ch := range eventChannels {
+		for _, subscriber := range eventSubscribers {
+			go func(event Event, eventChannel interface{}) {
 				select {
-				case ch.(EventChannel) <- event:
+				case eventChannel.(EventChannel) <- event:
 				case <-time.After(backoffStrategy.GetTimeout()):
 					backoffStrategy.OnDeliveryFailure(event)
 				}
-			}
-		}(event, eventSubscribers)
+			}(event, subscriber)
+		}
 	}
 }
 
