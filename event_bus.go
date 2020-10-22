@@ -1,7 +1,7 @@
 package messaging
 
 import (
-	"github.com/amahdavian/async-event-bus/internal/concurrency"
+	"github.com/amahdavian/async-event-bus/v2/internal/concurrency"
 	"time"
 )
 

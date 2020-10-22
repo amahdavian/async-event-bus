@@ -1,7 +1,7 @@
 package strategy
 
 import (
-	eb "github.com/amahdavian/async-event-bus"
+	eb "github.com/amahdavian/async-event-bus/v2"
 	"time"
 )
 

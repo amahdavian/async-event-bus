@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/amahdavian/async-event-bus/internal/concurrency"
+	"github.com/amahdavian/async-event-bus/v2/internal/concurrency"
 	"github.com/corbym/gocrest/is"
 	"github.com/corbym/gocrest/then"
 )

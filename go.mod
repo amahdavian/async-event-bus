@@ -1,4 +1,4 @@
-module github.com/amahdavian/async-event-bus
+module github.com/amahdavian/async-event-bus/v2
 
 go 1.14
 

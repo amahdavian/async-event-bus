@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	eb "github.com/amahdavian/async-event-bus"
+	eb "github.com/amahdavian/async-event-bus/v2"
 	"github.com/corbym/gocrest/is"
 	"github.com/corbym/gocrest/then"
 )

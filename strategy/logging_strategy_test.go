@@ -1,8 +1,8 @@
 package strategy_test
 
 import (
-	eb "github.com/amahdavian/async-event-bus"
-	"github.com/amahdavian/async-event-bus/strategy"
+	eb "github.com/amahdavian/async-event-bus/v2"
+	"github.com/amahdavian/async-event-bus/v2/strategy"
 	"github.com/corbym/gocrest/is"
 	"github.com/corbym/gocrest/then"
 	"testing"
