@@ -45,7 +45,7 @@ func TestShouldRetryGivenEventOnDeliveryFailureOnlyTilSuccessful(t *testing.T) {
 
 	assertThat(t, publisher.events, equals([]eb.Event{failedEvent, failedEvent}))
 	assertThat(t, len(publisher.strategies), equals(2))
-	assertThat(t, publisher.strategies[1].(*strategy.Retry), equals(strategy.NewRetry(publisher, timeout, 3)))
+	assertThat(t, publisher.strategies[1], equals(strategy.NewRetry(publisher, timeout, 3)))
 }
 
 func newMockPublisher(numberOfTimesToFail int) *mockPublisher {

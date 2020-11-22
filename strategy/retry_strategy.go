@@ -5,29 +5,29 @@ import (
 	"time"
 )
 
-type Publisher interface {
+type publisher interface {
 	Publish(event eb.Event, strategy eb.BackoffStrategy)
 }
 
-func NewRetry(publisher Publisher, timeout time.Duration, numberOfRetries int) *Retry {
-	return &Retry{
+func NewRetry(publisher publisher, timeout time.Duration, numberOfRetries int) *retry {
+	return &retry{
 		publisher:       publisher,
 		timeout:         timeout,
 		numberOfRetries: numberOfRetries,
 	}
 }
 
-type Retry struct {
-	publisher       Publisher
+type retry struct {
+	publisher       publisher
 	timeout         time.Duration
 	numberOfRetries int
 }
 
-func (r Retry) GetTimeout() time.Duration {
+func (r retry) GetTimeout() time.Duration {
 	return r.timeout
 }
 
-func (r Retry) OnDeliveryFailure(event eb.Event) {
+func (r retry) OnDeliveryFailure(event eb.Event) {
 	if r.numberOfRetries > 0 {
 		r.publisher.Publish(event, NewRetry(r.publisher, r.timeout, r.numberOfRetries-1))
 	}

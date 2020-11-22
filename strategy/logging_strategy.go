@@ -5,23 +5,23 @@ import (
 	"time"
 )
 
-type Logger interface {
+type logger interface {
 	Infof(string, ...interface{})
 }
 
-func NewLogging(timeout time.Duration, logger Logger) *Logging {
-	return &Logging{timeout: timeout, logger: logger}
+func NewLogging(timeout time.Duration, logger logger) *logging {
+	return &logging{timeout: timeout, logger: logger}
 }
 
-type Logging struct {
+type logging struct {
 	timeout time.Duration
-	logger Logger
+	logger  logger
 }
 
-func (n Logging) GetTimeout() time.Duration {
+func (n logging) GetTimeout() time.Duration {
 	return n.timeout
 }
 
-func (n Logging) OnDeliveryFailure(event eb.Event) {
+func (n logging) OnDeliveryFailure(event eb.Event) {
 	n.logger.Infof("failed to deliver message: %v", event)
 }
