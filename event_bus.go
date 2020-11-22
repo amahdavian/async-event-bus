@@ -19,17 +19,17 @@ type BackoffStrategy interface {
 	OnDeliveryFailure(Event)
 }
 
-type EventBus struct {
+type eventBus struct {
 	subscribers *concurrency.MapOfSlice
 }
 
-// NewEventBus creates a new instance of EventBus
-func NewEventBus() *EventBus {
-	return &EventBus{subscribers: concurrency.NewMapOfSlice()}
+// NewEventBus creates a new instance of eventBus
+func NewEventBus() *eventBus {
+	return &eventBus{subscribers: concurrency.NewMapOfSlice()}
 }
 
 // Publish publishes the given event to all subscribers and upon delivery failure, uses backoff strategy to recover.
-func (eventBus *EventBus) Publish(event Event, backoffStrategy BackoffStrategy) {
+func (eventBus *eventBus) Publish(event Event, backoffStrategy BackoffStrategy) {
 	if eventSubscribers, found := eventBus.subscribers.Get(event.Name); found {
 		for _, subscriber := range eventSubscribers {
 			go func(event Event, eventChannel interface{}) {
@@ -44,12 +44,12 @@ func (eventBus *EventBus) Publish(event Event, backoffStrategy BackoffStrategy) 
 }
 
 // Subscribe creates a subscription to the specific topic/event name.
-func (eventBus *EventBus) Subscribe(eventName string) EventChannel {
+func (eventBus *eventBus) Subscribe(eventName string) EventChannel {
 	channel := make(EventChannel)
 	eventBus.subscribers.AppendAt(eventName, channel)
 	return channel
 }
 
-func (eventBus *EventBus) UnSubscribe(eventName string, channel EventChannel) {
+func (eventBus *eventBus) UnSubscribe(eventName string, channel EventChannel) {
 	eventBus.subscribers.RemoveAt(eventName, channel)
 }
