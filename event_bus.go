@@ -31,17 +31,18 @@ func NewEventBus() *eventBus {
 	return &eventBus{subscribers: concurrency.NewMapOfSlice()}
 }
 
-// Publish publishes the given event to all subscribers and upon delivery failure, uses backoff strategy to recover.
+// Publish publishes the given event to all subscribers and in case of failure to deliver within the timeout period, uses backoff strategy to recover.
+// Each subscriber will be sent the event within its own goroutine.
 func (eventBus *eventBus) Publish(event Event, backoffStrategy BackoffStrategy) {
 	if eventSubscribers, found := eventBus.subscribers.Get(event.Name); found {
 		for _, subscriber := range eventSubscribers {
-			go func(event Event, eventChannel interface{}) {
+			go func(eventChannel interface{}) {
 				select {
 				case eventChannel.(EventChannel) <- event:
 				case <-time.After(backoffStrategy.GetTimeout()):
 					backoffStrategy.OnDeliveryFailure(event)
 				}
-			}(event, subscriber)
+			}(subscriber)
 		}
 	}
 }
