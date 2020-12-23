@@ -97,7 +97,7 @@ func TestShouldRemoveValueAndDeleteKeyWhenOnlyOneValueIsAssociatedWithGivenKey(t
 	actual, found = mapOfSlice.Get("SomeKey")
 
 	assertThat(t, found, is.False())
-	assertThat(t, actual == nil, is.True())
+	assertThat(t, actual, is.Nil())
 }
 
 func TestShouldOnlyRemoveGivenValueWhenMultipleValuesAreAssociatedWithGivenKey(t *testing.T) {
@@ -165,5 +165,5 @@ func TestShouldAllowConcurrentRemovalsOfValuesForGivenKey(t *testing.T) {
 	actual, found := mapOfSlice.Get("SomeKey")
 
 	assertThat(t, found, is.False())
-	assertThat(t, actual == nil, is.True())
+	assertThat(t, actual, is.Nil())
 }
